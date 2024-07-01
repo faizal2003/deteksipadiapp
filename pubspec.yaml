@@ -38,6 +38,11 @@ dependencies:
   image_picker: ^0.8.4+3
   one_clock: ^2.0.1
   dio: ^5.4.3+1
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  #  image_path: "assets/images/icon-128x128.png"
+  image_path_android: "assets/padi_icon.png"
 
 dev_dependencies:
   flutter_test:

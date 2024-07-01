@@ -77,7 +77,7 @@ class TabPage1 extends StatelessWidget {
                         MaterialPageRoute(builder: (context) => const ImagePickGallery()));
                   },
                   label: const Text('Ambil Gambar'),
-                  icon: const Icon(Icons.camera),
+                  icon: const Icon(Icons.upload_file_rounded),
                 ),
                 ElevatedButton.icon(
                   onPressed: () {
@@ -85,7 +85,7 @@ class TabPage1 extends StatelessWidget {
                         MaterialPageRoute(builder: (context) => const ImagePickCamera()));
                   },
                   label: const Text('Kirim Gambar'),
-                  icon: const Icon(Icons.upload_file_rounded),
+                  icon: const Icon(Icons.camera_alt_rounded),
                 ),
               ],
             )),
