@@ -1,98 +1,135 @@
+import 'dart:ffi';
 import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:padipari/persistent_bottom_bar_scaffold.dart';
 import 'package:one_clock/one_clock.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:random_x/random_x.dart';
+import 'package:file_saver/file_saver.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:gal/gal.dart';
+import 'package:padipari/listdetect.dart';
+
+
+
+
+// class HomePage extends StatelessWidget {
+//   final _tab1navigatorKey = GlobalKey<NavigatorState>();
+//   final _tab2navigatorKey = GlobalKey<NavigatorState>();
+//
+//   HomePage({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return PersistentBottomBarScaffold(
+//       items: [
+//         PersistentTabItem(
+//           tab: const TabPage1(),
+//           icon: Icons.home,
+//           title: 'Home',
+//           navigatorkey: _tab1navigatorKey,
+//         ),
+//         PersistentTabItem(
+//           tab: const TabPage2(),
+//           icon: Icons.info_outline_rounded,
+//           title: 'Info',
+//           navigatorkey: _tab2navigatorKey,
+//         ),
+//
+//       ],
+//     );
+//   }
+// }
 
 class HomePage extends StatelessWidget {
-  final _tab1navigatorKey = GlobalKey<NavigatorState>();
-  final _tab2navigatorKey = GlobalKey<NavigatorState>();
-
-  HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return PersistentBottomBarScaffold(
-      items: [
-        PersistentTabItem(
-          tab: TabPage1(),
-          icon: Icons.home,
-          title: 'Home',
-          navigatorkey: _tab1navigatorKey,
-        ),
-        PersistentTabItem(
-          tab: TabPage2(),
-          icon: Icons.info_outline_rounded,
-          title: 'Info',
-          navigatorkey: _tab2navigatorKey,
-        ),
-
-      ],
-    );
-  }
-}
-
-class TabPage1 extends StatelessWidget {
-  const TabPage1({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     print('TabPage1 build');
     return Scaffold(
-      appBar: AppBar(centerTitle: true ,title: Text('Deteksi Padi'), leading: Image.asset('assets/padi_icon.png')),
-      body: SizedBox(
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.white,
+      appBar: AppBar(centerTitle: true ,title: const Text('PadDetect'), leading: Image.asset('assets/logo.png'), backgroundColor: Colors.transparent, titleTextStyle: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold),),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/bg-main.png"),
+            fit: BoxFit.cover
+          ),
+        ),
+      child: SizedBox(
         width: double.infinity,
-        height: 200,
+        height: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Expanded(child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Expanded(child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
 
-                    DigitalClock(
-                      datetime: DateTime.now(),
-                      textScaleFactor: 1,
-                      showSeconds: false,
-                      isLive: true,
-                      // decoration: const BoxDecoration(color: Colors.cyan, shape: BoxShape.rectangle, borderRadius: BorderRadius.all(Radius.circular(15))),
+            Expanded(child: Container(
+              padding: EdgeInsets.fromLTRB(50, 40, 50, 100),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  DigitalClock(
+                    datetime: DateTime.now(),
+                    textScaleFactor: 2,
+                    showSeconds: false,
+                    isLive: true,
+                    digitalClockTextColor: Colors.white,
+                    padding: EdgeInsets.fromLTRB(100, 10, 100, 1),
+                    // decoration: const BoxDecoration(color: Colors.cyan, shape: BoxShape.rectangle, borderRadius: BorderRadius.all(Radius.circular(15))),
+                  ),
+                  SizedBox(
+                    width: 350,
+                    height: 100,
+                    child: FilledButton.icon(
+                      style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.green)),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => const ImagePickGallery()));
+                      },
+                      label: const Text('Identifikasi Dari Galeri', style: TextStyle(fontSize: 25),),
+                      icon: const Icon(Icons.upload_file_rounded, size: 40),
                     ),
+                  ),
 
-                  ],
-                )),
+                  SizedBox(
+                    width: 350,
+                    height: 100,
+                    child: FilledButton.icon(
+                      style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.green)),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => const ImagePickCamera()));
+                      },
+                      label: const Text('Identifikasi Dari Kamera', style: TextStyle(fontSize: 25), textAlign: TextAlign.center,),
+                      icon: const Icon(Icons.camera_enhance_rounded, size: 40,),
+                    ),
+                  ),
 
-              ],
+
+
+                ],
+              ),
             )),
-            Expanded(child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => const ImagePickGallery()));
-                  },
-                  label: const Text('Ambil Gambar'),
-                  icon: const Icon(Icons.upload_file_rounded),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => const ImagePickCamera()));
-                  },
-                  label: const Text('Kirim Gambar'),
-                  icon: const Icon(Icons.camera_alt_rounded),
-                ),
-              ],
-            )),
-            Card(child: _ResCard(cardName: 'Hasil Gambar')),
+            // const Card(child: _ResCard(cardName: 'Hasil Gambar')),
           ],
         ),
       ),
+      )
     );
   }
 }
@@ -120,23 +157,25 @@ class _ResCard extends StatelessWidget {
 
 
 class TabPage2 extends StatelessWidget {
+  const TabPage2({super.key});
+
   @override
   Widget build(BuildContext context) {
     print('TabPage2 build');
     return Scaffold(
-      appBar: AppBar(title: Text('Tab 2')),
-      body: Container(
+      appBar: AppBar(title: const Text('Tab 2')),
+      body: SizedBox(
         width: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Tab 2'),
+            const Text('Tab 2'),
             ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => Page2('tab2')));
+                      MaterialPageRoute(builder: (context) => const Page2('tab2')));
                 },
-                child: Text('Go to page2'))
+                child: const Text('Go to page2'))
           ],
         ),
       ),
@@ -155,51 +194,106 @@ class ImagePickCamera extends StatefulWidget {
 
 class _ImagePickCameraState extends State<ImagePickCamera> {
   File ? _SelectedImage;
+  Uint8List ? _ResponseAPI;
+  var urlAPI = 'https://detectpadi.my.id/object-to-img';
+
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
+        extendBodyBehindAppBar: true,
+        backgroundColor: Colors.white,
         appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.white),
+          backgroundColor: Colors.transparent,
           centerTitle: true,
-          title: const Text('Kirim Gambar Dari Kamera'),
+          title: const Text('Kirim Gambar Dari Camera'),
+          titleTextStyle: TextStyle(color: Colors.white, fontSize: 30),
         ),
-        body: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 350,
-              height: double.infinity,
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 30),
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                  color: Colors.blue,
+        body: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage("assets/bg-main.png"),
+                  fit: BoxFit.fill
+              )
+          ),
+          child: Container(
+              padding: const EdgeInsets.fromLTRB(50, 80, 50, 10),
+              child: SizedBox(
+                width: 350,
+                height: double.infinity,
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(16, 11, 16, 30),
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    color: Colors.white,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Tata cara Pengambilan gambar :', textAlign: TextAlign.left, style: TextStyle(fontSize: 16),),
+                      const Text('1. Pastikan foto tidak terlalu terang dan tidak terlalu gelap', textAlign: TextAlign.left, style: TextStyle(fontSize: 16), ),
+                      const Text('2. Pastikan foto fokus pada Tanaman Padi yang akan diidentifikasi', textAlign: TextAlign.left, style: TextStyle(fontSize: 16),),
+                      const Text('3. Apabila tidak dapat teridentifikasi ulangi dengan memfokuskan pada penyakitnya saja', textAlign: TextAlign.left, style: TextStyle(fontSize: 16),),
+                      const Text('4. Hasil deteksi akan langsung tersimpan pada galeri', textAlign: TextAlign.left, style: TextStyle(fontSize: 16),),
+                      SizedBox(), _ResponseAPI != null ? Image.memory(_ResponseAPI!) : Text(''),
+                      // SizedBox(), _ResponseAPI != null ? FilledButton(onPressed: () {_deleteimg();}, child: Text('Hapus Gambar'),) : Text(''),
+                      Expanded(child: Container(
+                        padding: EdgeInsets.all(1),
+                        alignment: Alignment.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                              const SizedBox(), _SelectedImage != null ? Image.file(_SelectedImage!) : SizedBox(
+                              width: 230,
+                              height: 50,
+                              child: FilledButton.icon(
+                                style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.green)),
+                                onPressed: () {
+                                  _getImageFromCamera();
+                                },
+                                label: const Text('pilih gambar', style: TextStyle(fontSize: 20),),
+                                icon: const Icon(Icons.camera_alt_rounded, size: 30),
+                              ),
+                            ),
+                              const SizedBox(), _ResponseAPI != null ? SizedBox(
+                                  width: 230,
+                                  height: 50,
+                                  child: FilledButton.icon(
+                                    style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.red)),
+                                    onPressed: () {
+                                      _deleteimg();
+                                    },
+                                    label: const Text('Hapus Gambar', style: TextStyle(fontSize: 20),),
+                                    icon: const Icon(Icons.delete_forever_rounded, size: 30),
+                                  ),
+                                ) : Text('')
+                            ],
+                            )),
+                            _SelectedImage != null ? FilledButton(onPressed: () {_upGambar(urlAPI, _SelectedImage!);}, child: Text('Upload Gambar'),) : Text(''),
+                            _SelectedImage != null ? FilledButton.icon(
+                              style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.red)),
+                              onPressed: () {
+                                _deleteimg();
+                              },
+                              label: const Text('Hapus Gambar', style: TextStyle(fontSize: 20),),
+                              icon: const Icon(Icons.delete_forever, size: 30),
+                            ) : Text(''),
+
+                          ],
+                        ),
+                      ))
+                    ],
+                  ),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Tata cara Pengambilan gambar :', textAlign: TextAlign.left, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                    Text('1. Pastikan foto tidak terlalu terang / gelap', textAlign: TextAlign.left, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold), ),
-                    Text('2. Pastikan foto tegak lurus', textAlign: TextAlign.left, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                    Text('3. Pastikan cukup dekat dengan jarak 10 - 20 cm', textAlign: TextAlign.left, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                    Text('4. Pastikan foto fokus / tidak blur', textAlign: TextAlign.left, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                    Expanded(child: Container(
-                      alignment: Alignment.center,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          ElevatedButton(onPressed: () {_getImageFromCamera();}, child: Text('ambil Gambar')),
-                          Expanded(child: Column(children: [const SizedBox(), _SelectedImage != null ? Image.file(_SelectedImage!) : const Text("Tambahkan gambar")],))
-                        ],
-                      ),
-                    ))
-                  ],
-                ),
-              ),
-            )
-          ],
+              )
+          ),
         )
     );
   }
@@ -209,6 +303,78 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
     if (returnImage == null) return;
     setState((){
       _SelectedImage = File(returnImage.path);
+    });
+  }
+  Future<void> _upGambar(String url, File file) async{
+
+    context.loaderOverlay.show();
+
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+    request.files.add(await http.MultipartFile.fromPath('file', file.path));
+
+    var streamedResponse = await request.send();
+    var response = await http.Response.fromStream(streamedResponse);
+    // final resBody = await response.stream.bytesToString();
+    if (streamedResponse.statusCode == 200) {
+      // Upload successful
+      print('success');
+
+      setState(() {
+        _ResponseAPI = response.bodyBytes;
+        _SelectedImage = null;
+      });
+
+      String genName = RndX.randomString(type: RandomCharStringType.alphaNumerical, length: 10);
+      // final String savepath = (getApplicationDocumentsDirectory()).path;
+      // FileSaver.instance.saveFile(name: genName, ext: 'jpg', file: Image.memory(response.bodyBytes));
+      saveImage(response.bodyBytes);
+
+
+
+      print(response.bodyBytes);
+
+      context.loaderOverlay.hide();
+
+    } else {
+      // Handle errorset
+    }
+  }
+
+  Future<String> saveImage(Uint8List bytes) async {
+    String path = "";
+    try {
+      Directory? root = await getDownloadsDirectory();
+      String directoryPath = '${root?.path}/appName';
+      // Create the directory if it doesn't exist
+      String genName = RndX.randomString(type: RandomCharStringType.alphaNumerical, length: 10);
+      await Directory(directoryPath).create(recursive: true);
+      String filePath = '$directoryPath/$genName.jpg';
+      final file = await File(filePath).writeAsBytes(bytes);
+      path = file.path;
+      await Gal.putImage(path);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    print(path);
+    return path;
+  }
+
+  Future<void> requestPermission() async {
+    final permission = Permission.camera;
+
+    if (await permission.isDenied) {
+      await permission.request();
+    }
+  }
+
+  Future<void> _deleteimg() async{
+    setState(() {
+      _SelectedImage = null;
+      _ResponseAPI = null;
     });
   }
 }
@@ -224,43 +390,100 @@ class ImagePickGallery extends StatefulWidget {
 
 class _ImagePickState extends State<ImagePickGallery> {
   File ? _SelectedImage;
+  Uint8List ? _ResponseAPI;
+  String ? _errorst;
+  int ? _pr;
+  var urlAPI = 'https://detectpadi.my.id/object-to-img';
+
+
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
+        backgroundColor: Colors.white,
         appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.white),
+          backgroundColor: Colors.transparent,
           centerTitle: true,
           title: const Text('Kirim Gambar Dari Galeri'),
+          titleTextStyle: TextStyle(color: Colors.white, fontSize: 30),
         ),
-        body: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
+        body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/bg-main.png"),
+              fit: BoxFit.fill
+            )
+          ),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(50, 100, 50, 50),
+            child: SizedBox(
               width: 350,
               height: double.infinity,
               child: Container(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 30),
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(15)),
-                  color: Colors.blue,
+                  color: Colors.white,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Tata cara Pengambilan gambar :', textAlign: TextAlign.left, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                    Text('1. Pastikan foto tidak terlalu terang / gelap', textAlign: TextAlign.left, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold), ),
-                    Text('2. Pastikan foto tegak lurus', textAlign: TextAlign.left, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                    Text('3. Pastikan cukup dekat dengan jarak 10 - 20 cm', textAlign: TextAlign.left, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                    Text('4. Pastikan foto fokus / tidak blur', textAlign: TextAlign.left, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+                    const Text('Tata cara Pengambilan gambar :', textAlign: TextAlign.left, style: TextStyle(fontSize: 16),),
+                    const Text('1. Pastikan foto tidak terlalu terang dan tidak terlalu gelap', textAlign: TextAlign.left, style: TextStyle(fontSize: 16), ),
+                    const Text('2. Pastikan foto fokus pada Tanaman Padi yang akan diidentifikasi', textAlign: TextAlign.left, style: TextStyle(fontSize: 16),),
+                    const Text('3. Apabila tidak dapat teridentifikasi ulangi dengan memotong gambar dan fokuskan pada penyakitnya saja', textAlign: TextAlign.left, style: TextStyle(fontSize: 16),),
+                    const Text('4. Hasil deteksi akan langsung tersimpan pada galeri', textAlign: TextAlign.left, style: TextStyle(fontSize: 16),),
+                    SizedBox(), _ResponseAPI != null ? Image.memory(_ResponseAPI!) : Text(''),
+                    // SizedBox(), _ResponseAPI != null ? FilledButton(onPressed: () {_deleteimg();}, child: Text('Hapus Gambar'),) : Text(''),
                     Expanded(child: Container(
+                      padding: EdgeInsets.all(10),
                       alignment: Alignment.center,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          ElevatedButton(onPressed: () {_getImageFromCamera();}, child: Text('ambil Gambar')),
-                          Expanded(child: Column(children: [const SizedBox(), _SelectedImage != null ? Image.file(_SelectedImage!) : const Text("Tambahkan gambar")],))
+                          Expanded(child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              const SizedBox(), _SelectedImage != null ? Image.file(_SelectedImage!) : SizedBox(
+                                width: 230,
+                                height: 50,
+                                child: FilledButton.icon(
+                                  style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.green)),
+                                  onPressed: () {
+                                    _getImageFromGallery();
+                                  },
+                                  label: const Text('pilih gambar', style: TextStyle(fontSize: 20),),
+                                  icon: const Icon(Icons.camera_alt_rounded, size: 30),
+                                ),
+                              ),
+                              const SizedBox(), _ResponseAPI != null ? SizedBox(
+                                width: 230,
+                                height: 50,
+                                child: FilledButton.icon(
+                                  style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.red)),
+                                  onPressed: () {
+                                    _deleteimg();
+                                  },
+                                  label: const Text('Hapus Gambar', style: TextStyle(fontSize: 20),),
+                                  icon: const Icon(Icons.delete_forever_rounded, size: 30),
+                                ),
+                              ) : Text('')
+                            ],
+                          )),
+                          _SelectedImage != null ? FilledButton(onPressed: () {_upGambar(urlAPI, _SelectedImage!);}, child: Text('Upload Gambar'),) : Text(''),
+                          _SelectedImage != null ? FilledButton.icon(
+                            style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.red)),
+                            onPressed: () {
+                              _deleteimg();
+                            },
+                            label: const Text('Hapus Gambar', style: TextStyle(fontSize: 20),),
+                            icon: const Icon(Icons.delete_forever, size: 30),
+                          ) : Text(''),
+
                         ],
                       ),
                     ))
@@ -268,11 +491,11 @@ class _ImagePickState extends State<ImagePickGallery> {
                 ),
               ),
             )
-          ],
+          ),
         )
     );
   }
-  Future _getImageFromCamera() async{
+  Future _getImageFromGallery() async{
     final returnImage = await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (returnImage == null) return;
@@ -280,28 +503,117 @@ class _ImagePickState extends State<ImagePickGallery> {
       _SelectedImage = File(returnImage.path);
     });
   }
+
+  Future<void> requestPermission() async {
+    final permission = Permission.storage;
+
+
+    if (await permission.isDenied) {
+      await permission.request();
+    }
+  }
+
+  Future<void> _upGambar(String url, File file) async{
+
+    context.loaderOverlay.show();
+
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+    request.files.add(await http.MultipartFile.fromPath('file', file.path));
+
+    var streamedResponse = await request.send();
+    var response = await http.Response.fromStream(streamedResponse);
+    // final resBody = await response.stream.bytesToString();
+    if (streamedResponse.statusCode == 200) {
+      // Upload successful
+      print('success');
+
+      setState(() {
+        _ResponseAPI = response.bodyBytes;
+        _SelectedImage = null;
+      });
+
+      String genName = RndX.randomString(type: RandomCharStringType.alphaNumerical, length: 10);
+      // final String savepath = (getApplicationDocumentsDirectory()).path;
+      // FileSaver.instance.saveFile(name: genName, ext: 'jpg', file: Image.memory(response.bodyBytes));
+      saveImage(response.bodyBytes);
+
+
+
+      print(response.bodyBytes);
+
+      context.loaderOverlay.hide();
+
+    } else {
+      // Handle errorset
+      setState(() {
+        _errorst = 'error';
+      });
+    }
+  }
+
+  Future<void> _deleteimg() async{
+    setState(() {
+      _SelectedImage = null;
+      _ResponseAPI = null;
+    });
+  }
+
+  Future<String> saveImage(Uint8List bytes) async {
+    String path = "";
+    try {
+
+      setState(() {
+        _pr = 1;
+      });
+
+
+
+      Directory? root = await getTemporaryDirectory();
+      String directoryPath = '${root.path}/appName';
+      // Create the directory if it doesn't exist
+      String genName = RndX.randomString(type: RandomCharStringType.alphaNumerical, length: 10);
+      await Directory(directoryPath).create(recursive: true);
+      String filePath = '$directoryPath/$genName.jpg';
+      final file = await File(filePath).writeAsBytes(bytes);
+      path = file.path;
+      await Gal.putImage(path);
+
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    setState(() {
+      _pr = 0;
+    });
+
+
+    print(path);
+    return path;
+  }
+
 }
 
 
 
 class TabPage3 extends StatelessWidget {
+  const TabPage3({super.key});
+
   @override
   Widget build(BuildContext context) {
     print('TabPage3 build');
     return Scaffold(
-      appBar: AppBar(title: Text('Tab 3')),
-      body: Container(
+      appBar: AppBar(title: const Text('Tab 3')),
+      body: SizedBox(
         width: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Tab 3'),
+            const Text('Tab 3'),
             ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => Page2('tab3')));
+                      MaterialPageRoute(builder: (context) => const Page2('tab3')));
                 },
-                child: Text('Go to page2'))
+                child: const Text('Go to page2'))
           ],
         ),
       ),
@@ -312,13 +624,13 @@ class TabPage3 extends StatelessWidget {
 class Page1 extends StatelessWidget {
   final String inTab;
 
-  const Page1(this.inTab);
+  const Page1(this.inTab, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Page 1')),
-      body: Container(
+      appBar: AppBar(title: const Text('Page 1')),
+      body: SizedBox(
         width: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -329,7 +641,7 @@ class Page1 extends StatelessWidget {
                   Navigator.of(context).push(
                       MaterialPageRoute(builder: (context) => Page2(inTab)));
                 },
-                child: Text('Go to page2'))
+                child: const Text('Go to page2'))
           ],
         ),
       ),
@@ -340,12 +652,12 @@ class Page1 extends StatelessWidget {
 class Page2 extends StatelessWidget {
   final String inTab;
 
-  const Page2(this.inTab);
+  const Page2(this.inTab, {super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Page 2')),
-      body: Container(
+      appBar: AppBar(title: const Text('Page 2')),
+      body: SizedBox(
         width: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -356,7 +668,7 @@ class Page2 extends StatelessWidget {
                   Navigator.of(context).push(
                       MaterialPageRoute(builder: (context) => Page3(inTab)));
                 },
-                child: Text('Go to page3'))
+                child: const Text('Go to page3'))
           ],
         ),
       ),
@@ -367,12 +679,12 @@ class Page2 extends StatelessWidget {
 class Page3 extends StatelessWidget {
   final String inTab;
 
-  const Page3(this.inTab);
+  const Page3(this.inTab, {super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Page 3')),
-      body: Container(
+      appBar: AppBar(title: const Text('Page 3')),
+      body: SizedBox(
         width: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -382,7 +694,7 @@ class Page3 extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Go back'))
+                child: const Text('Go back'))
           ],
         ),
       ),
