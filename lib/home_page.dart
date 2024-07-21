@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
@@ -62,7 +63,33 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
-      appBar: AppBar(centerTitle: true ,title: const Text('PadDetect'), leading: Image.asset('assets/logo.png'), backgroundColor: Colors.transparent, titleTextStyle: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold),),
+      appBar: AppBar(centerTitle: true ,
+        title: const Text('PadDetect'),
+        leading: Image.asset('assets/logo.png'),
+        backgroundColor: Colors.transparent,
+        titleTextStyle: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold),
+        actions: <Widget>[
+          IconButton(onPressed: (){
+            showDialog(context: context, builder: (ctx) => AlertDialog(
+              title: const Text("Tata cara identifikasi"),
+              content: const Text('*Identifikasi dari galeri untuk mengidentifikasi penyakit tanaman padi melalui galeri pada ponsel '
+                  '*Identifikasi dari kamera untuk mengidentifikasi penyakit tanaman padi dari kamera pada ponsel'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                  },
+                  child: Container(
+                    color: Colors.green,
+                    padding: const EdgeInsets.all(14),
+                    child: const Text("okay", style: TextStyle(color: Colors.white),),
+                  ),
+                ),
+              ],
+            ));
+          }, icon: Icon(Icons.help_outlined, size: 42, color: Colors.white,))
+        ],
+      ),
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -119,6 +146,7 @@ class HomePage extends StatelessWidget {
                       icon: const Icon(Icons.camera_enhance_rounded, size: 40,),
                     ),
                   ),
+
 
 
 
@@ -195,6 +223,8 @@ class ImagePickCamera extends StatefulWidget {
 class _ImagePickCameraState extends State<ImagePickCamera> {
   File ? _SelectedImage;
   Uint8List ? _ResponseAPI;
+  int ? _pr;
+  int _imgstat = 0;
   var urlAPI = 'https://detectpadi.my.id/object-to-img';
 
   @override
@@ -209,6 +239,26 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
           centerTitle: true,
           title: const Text('Kirim Gambar Dari Camera'),
           titleTextStyle: TextStyle(color: Colors.white, fontSize: 30),
+          actions: <Widget>[
+            IconButton(onPressed: (){
+              showDialog(context: context, builder: (ctx) => AlertDialog(
+                title: const Text("Cara Pengambilan gambar"),
+                content: const Text('Tekan tombol Pilih gambar, lalu foto penyakit yang akan di deteksi. Pastikan foto fokus, tidak buram, dan tidak terlalu terang. Setelah ambil gambar, harap tekan tombol upload untuk memulai proses deteksi penyakit padi. Hasil deteksi akan tersimpan otomatis di dalam galeri'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    },
+                    child: Container(
+                      color: Colors.green,
+                      padding: const EdgeInsets.all(14),
+                      child: const Text("okay", style: TextStyle(color: Colors.white),),
+                    ),
+                  ),
+                ],
+              ));
+            }, icon: Icon(Icons.help_rounded, size: 32,))
+          ],
         ),
         body: Container(
           decoration: BoxDecoration(
@@ -218,12 +268,12 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
               )
           ),
           child: Container(
-              padding: const EdgeInsets.fromLTRB(50, 80, 50, 10),
+              padding: const EdgeInsets.fromLTRB(50, 70, 50, 50),
               child: SizedBox(
                 width: 350,
                 height: double.infinity,
                 child: Container(
-                  padding: const EdgeInsets.fromLTRB(16, 11, 16, 30),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 30),
                   decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(15)),
                     color: Colors.white,
@@ -232,36 +282,34 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Tata cara Pengambilan gambar :', textAlign: TextAlign.left, style: TextStyle(fontSize: 16),),
-                      const Text('1. Pastikan foto tidak terlalu terang dan tidak terlalu gelap', textAlign: TextAlign.left, style: TextStyle(fontSize: 16), ),
-                      const Text('2. Pastikan foto fokus pada Tanaman Padi yang akan diidentifikasi', textAlign: TextAlign.left, style: TextStyle(fontSize: 16),),
-                      const Text('3. Apabila tidak dapat teridentifikasi ulangi dengan memfokuskan pada penyakitnya saja', textAlign: TextAlign.left, style: TextStyle(fontSize: 16),),
-                      const Text('4. Hasil deteksi akan langsung tersimpan pada galeri', textAlign: TextAlign.left, style: TextStyle(fontSize: 16),),
+                      _pr == 1 ? LinearProgressIndicator(color: Colors.green,) : Text(''),
                       SizedBox(), _ResponseAPI != null ? Image.memory(_ResponseAPI!) : Text(''),
                       // SizedBox(), _ResponseAPI != null ? FilledButton(onPressed: () {_deleteimg();}, child: Text('Hapus Gambar'),) : Text(''),
                       Expanded(child: Container(
                         padding: EdgeInsets.all(1),
                         alignment: Alignment.center,
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Expanded(child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                              const SizedBox(), _SelectedImage != null ? Image.file(_SelectedImage!) : SizedBox(
-                              width: 230,
-                              height: 50,
-                              child: FilledButton.icon(
-                                style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.green)),
-                                onPressed: () {
-                                  _getImageFromCamera();
-                                },
-                                label: const Text('pilih gambar', style: TextStyle(fontSize: 20),),
-                                icon: const Icon(Icons.camera_alt_rounded, size: 30),
-                              ),
-                            ),
+                                const SizedBox(), _SelectedImage != null ? Image.file(_SelectedImage!) : Text(''),
+                                _SelectedImage == null && _imgstat == 0 ? SizedBox(
+                                  width: 230,
+                                  height: 50,
+                                  child:
+                                  FilledButton.icon(
+                                    style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.green)),
+                                    onPressed: () {
+                                      _getImageFromCamera();
+                                    },
+                                    label: const Text('pilih gambar', style: TextStyle(fontSize: 20),),
+                                    icon: const Icon(Icons.camera_alt_rounded, size: 30),
+                                  ),
+                                ):Text(''),
                               const SizedBox(), _ResponseAPI != null ? SizedBox(
                                   width: 230,
                                   height: 50,
@@ -307,6 +355,10 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
   }
   Future<void> _upGambar(String url, File file) async{
 
+    setState(() {
+      _pr = 1;
+    });
+
     context.loaderOverlay.show();
 
     var status = await Permission.storage.status;
@@ -333,7 +385,10 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
       // FileSaver.instance.saveFile(name: genName, ext: 'jpg', file: Image.memory(response.bodyBytes));
       saveImage(response.bodyBytes);
 
-
+      setState(() {
+        _pr = 0;
+        _imgstat = 1;
+      });
 
       print(response.bodyBytes);
 
@@ -346,6 +401,7 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
 
   Future<String> saveImage(Uint8List bytes) async {
     String path = "";
+
     try {
       Directory? root = await getDownloadsDirectory();
       String directoryPath = '${root?.path}/appName';
@@ -375,6 +431,7 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
     setState(() {
       _SelectedImage = null;
       _ResponseAPI = null;
+      _imgstat = 0;
     });
   }
 }
@@ -393,6 +450,8 @@ class _ImagePickState extends State<ImagePickGallery> {
   Uint8List ? _ResponseAPI;
   String ? _errorst;
   int ? _pr;
+  int _imgstat = 0;
+  //link upload gambar ke server
   var urlAPI = 'https://detectpadi.my.id/object-to-img';
 
 
@@ -403,11 +462,31 @@ class _ImagePickState extends State<ImagePickGallery> {
       extendBodyBehindAppBar: true,
         backgroundColor: Colors.white,
         appBar: AppBar(
+          actions: <Widget>[
+            IconButton(onPressed: (){
+              showDialog(context: context, builder: (ctx) => AlertDialog(
+                title: const Text("Cara Pengambilan gambar"),
+                content: const Text('Tekan tombol Pilih gambar, lalu pilih dari galeri handphone, pastikan foto fokus, tidak buram, dan tidak terlalu terang. Setelah pilih gambar, harap tekan tombol upload untuk memulai proses deteksi penyakit padi. Hasil deteksi akan tersimpan otomatis di dalam galeri'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    },
+                    child: Container(
+                      color: Colors.green,
+                      padding: const EdgeInsets.all(14),
+                      child: const Text("okay", style: TextStyle(color: Colors.white),),
+                    ),
+                  ),
+                ],
+              ));
+            }, icon: Icon(Icons.help_rounded, size: 32,))
+          ],
           iconTheme: IconThemeData(color: Colors.white),
           backgroundColor: Colors.transparent,
           centerTitle: true,
           title: const Text('Kirim Gambar Dari Galeri'),
-          titleTextStyle: TextStyle(color: Colors.white, fontSize: 30),
+          titleTextStyle: TextStyle(color: Colors.white, fontSize: 28),
         ),
         body: Container(
           decoration: BoxDecoration(
@@ -417,41 +496,35 @@ class _ImagePickState extends State<ImagePickGallery> {
             )
           ),
           child: Container(
-            padding: const EdgeInsets.fromLTRB(50, 100, 50, 50),
+            padding: const EdgeInsets.fromLTRB(50, 70, 50, 50),
             child: SizedBox(
-              width: 350,
-              height: double.infinity,
               child: Container(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 30),
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 30),
                 decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
                   color: Colors.white,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Tata cara Pengambilan gambar :', textAlign: TextAlign.left, style: TextStyle(fontSize: 16),),
-                    const Text('1. Pastikan foto tidak terlalu terang dan tidak terlalu gelap', textAlign: TextAlign.left, style: TextStyle(fontSize: 16), ),
-                    const Text('2. Pastikan foto fokus pada Tanaman Padi yang akan diidentifikasi', textAlign: TextAlign.left, style: TextStyle(fontSize: 16),),
-                    const Text('3. Apabila tidak dapat teridentifikasi ulangi dengan memotong gambar dan fokuskan pada penyakitnya saja', textAlign: TextAlign.left, style: TextStyle(fontSize: 16),),
-                    const Text('4. Hasil deteksi akan langsung tersimpan pada galeri', textAlign: TextAlign.left, style: TextStyle(fontSize: 16),),
+                    _pr == 1 ? LinearProgressIndicator(color: Colors.green,) : Text(''),
                     SizedBox(), _ResponseAPI != null ? Image.memory(_ResponseAPI!) : Text(''),
                     // SizedBox(), _ResponseAPI != null ? FilledButton(onPressed: () {_deleteimg();}, child: Text('Hapus Gambar'),) : Text(''),
                     Expanded(child: Container(
                       padding: EdgeInsets.all(10),
-                      alignment: Alignment.center,
+                      alignment: Alignment.bottomCenter,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+
                         children: [
                           Expanded(child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              const SizedBox(), _SelectedImage != null ? Image.file(_SelectedImage!) : SizedBox(
+                              const SizedBox(), _SelectedImage != null ? Image.file(_SelectedImage!) : Text(''),
+                              _SelectedImage == null && _imgstat == 0 ? SizedBox(
                                 width: 230,
                                 height: 50,
-                                child: FilledButton.icon(
+                                child:
+                                FilledButton.icon(
                                   style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.green)),
                                   onPressed: () {
                                     _getImageFromGallery();
@@ -459,8 +532,8 @@ class _ImagePickState extends State<ImagePickGallery> {
                                   label: const Text('pilih gambar', style: TextStyle(fontSize: 20),),
                                   icon: const Icon(Icons.camera_alt_rounded, size: 30),
                                 ),
-                              ),
-                              const SizedBox(), _ResponseAPI != null ? SizedBox(
+                              ):Text(''),
+                              _ResponseAPI != null ? SizedBox(
                                 width: 230,
                                 height: 50,
                                 child: FilledButton.icon(
@@ -514,9 +587,11 @@ class _ImagePickState extends State<ImagePickGallery> {
   }
 
   Future<void> _upGambar(String url, File file) async{
-
+  //fungsi upload gamber ke server
     context.loaderOverlay.show();
-
+    setState(() {
+      _pr = 1;
+    });
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.files.add(await http.MultipartFile.fromPath('file', file.path));
 
@@ -530,6 +605,8 @@ class _ImagePickState extends State<ImagePickGallery> {
       setState(() {
         _ResponseAPI = response.bodyBytes;
         _SelectedImage = null;
+        _pr = 0;
+        _imgstat = 1;
       });
 
       String genName = RndX.randomString(type: RandomCharStringType.alphaNumerical, length: 10);
@@ -555,6 +632,7 @@ class _ImagePickState extends State<ImagePickGallery> {
     setState(() {
       _SelectedImage = null;
       _ResponseAPI = null;
+      _imgstat = 0;
     });
   }
 
