@@ -26,34 +26,7 @@ import 'package:padipari/listdetect.dart';
 
 
 
-// class HomePage extends StatelessWidget {
-//   final _tab1navigatorKey = GlobalKey<NavigatorState>();
-//   final _tab2navigatorKey = GlobalKey<NavigatorState>();
-//
-//   HomePage({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return PersistentBottomBarScaffold(
-//       items: [
-//         PersistentTabItem(
-//           tab: const TabPage1(),
-//           icon: Icons.home,
-//           title: 'Home',
-//           navigatorkey: _tab1navigatorKey,
-//         ),
-//         PersistentTabItem(
-//           tab: const TabPage2(),
-//           icon: Icons.info_outline_rounded,
-//           title: 'Info',
-//           navigatorkey: _tab2navigatorKey,
-//         ),
-//
-//       ],
-//     );
-//   }
-// }
-
+// start home menu
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -153,7 +126,6 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             )),
-            // const Card(child: _ResCard(cardName: 'Hasil Gambar')),
           ],
         ),
       ),
@@ -161,7 +133,7 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
+//end home menu
 
 
 class _ResCard extends StatelessWidget {
@@ -184,33 +156,8 @@ class _ResCard extends StatelessWidget {
 }
 
 
-class TabPage2 extends StatelessWidget {
-  const TabPage2({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    print('TabPage2 build');
-    return Scaffold(
-      appBar: AppBar(title: const Text('Tab 2')),
-      body: SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Tab 2'),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const Page2('tab2')));
-                },
-                child: const Text('Go to page2'))
-          ],
-        ),
-      ),
-    );
-  }
-}
-
+// start screen ambil gambar dari kamera
 class ImagePickCamera extends StatefulWidget {
 
   const ImagePickCamera({super.key});
@@ -225,6 +172,7 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
   Uint8List ? _ResponseAPI;
   int ? _pr;
   int _imgstat = 0;
+  //link upload ke server
   var urlAPI = 'https://detectpadi.my.id/object-to-img';
 
   @override
@@ -345,6 +293,7 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
         )
     );
   }
+  //fungsi ambil gambar dari kamera
   Future _getImageFromCamera() async{
     final returnImage = await ImagePicker().pickImage(source: ImageSource.camera);
 
@@ -353,6 +302,7 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
       _SelectedImage = File(returnImage.path);
     });
   }
+  //fungsi upload gambar
   Future<void> _upGambar(String url, File file) async{
 
     setState(() {
@@ -365,6 +315,7 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
     if (!status.isGranted) {
       await Permission.storage.request();
     }
+    //fungsi kirim gambar ke galeri dan simpan gambar terdeeksi
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.files.add(await http.MultipartFile.fromPath('file', file.path));
 
@@ -398,7 +349,7 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
       // Handle errorset
     }
   }
-
+  //fungsi simpan gambar ke galeri
   Future<String> saveImage(Uint8List bytes) async {
     String path = "";
 
@@ -418,7 +369,7 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
     print(path);
     return path;
   }
-
+  //perizinan simpan gambar ke galeri
   Future<void> requestPermission() async {
     final permission = Permission.camera;
 
@@ -426,7 +377,7 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
       await permission.request();
     }
   }
-
+  //fungsi hapus gambar dari screen
   Future<void> _deleteimg() async{
     setState(() {
       _SelectedImage = null;
@@ -435,7 +386,9 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
     });
   }
 }
+//end screen ambil gambar dari kamera
 
+//start screen ambil gambal dari galeri
 class ImagePickGallery extends StatefulWidget {
 
   const ImagePickGallery({super.key});
@@ -462,6 +415,7 @@ class _ImagePickState extends State<ImagePickGallery> {
       extendBodyBehindAppBar: true,
         backgroundColor: Colors.white,
         appBar: AppBar(
+          //tombol tata cara ambil gambar
           actions: <Widget>[
             IconButton(onPressed: (){
               showDialog(context: context, builder: (ctx) => AlertDialog(
@@ -482,12 +436,16 @@ class _ImagePickState extends State<ImagePickGallery> {
               ));
             }, icon: Icon(Icons.help_rounded, size: 32,))
           ],
+          //end tata cara ambil gambar
+
+          //title screen
           iconTheme: IconThemeData(color: Colors.white),
           backgroundColor: Colors.transparent,
           centerTitle: true,
           title: const Text('Kirim Gambar Dari Galeri'),
           titleTextStyle: TextStyle(color: Colors.white, fontSize: 28),
         ),
+        //set background
         body: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -504,6 +462,7 @@ class _ImagePickState extends State<ImagePickGallery> {
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                   color: Colors.white,
                 ),
+                //logika tombol upload hapus dan ambil gambar
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -568,6 +527,7 @@ class _ImagePickState extends State<ImagePickGallery> {
         )
     );
   }
+  //fungsi ambil gambar dari galeri
   Future _getImageFromGallery() async{
     final returnImage = await ImagePicker().pickImage(source: ImageSource.gallery);
 
@@ -576,7 +536,9 @@ class _ImagePickState extends State<ImagePickGallery> {
       _SelectedImage = File(returnImage.path);
     });
   }
+  //end ambil gambar dari galeri
 
+  //fungsi perizinan simpan gambar
   Future<void> requestPermission() async {
     final permission = Permission.storage;
 
@@ -585,6 +547,7 @@ class _ImagePickState extends State<ImagePickGallery> {
       await permission.request();
     }
   }
+  //end perizinan simpan gambar
 
   Future<void> _upGambar(String url, File file) async{
   //fungsi upload gamber ke server
@@ -592,15 +555,18 @@ class _ImagePickState extends State<ImagePickGallery> {
     setState(() {
       _pr = 1;
     });
+    //kirim gambar ke server
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.files.add(await http.MultipartFile.fromPath('file', file.path));
 
     var streamedResponse = await request.send();
     var response = await http.Response.fromStream(streamedResponse);
     // final resBody = await response.stream.bytesToString();
+    //end kirim gambar ke server
     if (streamedResponse.statusCode == 200) {
       // Upload successful
       print('success');
+
 
       setState(() {
         _ResponseAPI = response.bodyBytes;
@@ -609,11 +575,12 @@ class _ImagePickState extends State<ImagePickGallery> {
         _imgstat = 1;
       });
 
+      //save gambar
       String genName = RndX.randomString(type: RandomCharStringType.alphaNumerical, length: 10);
       // final String savepath = (getApplicationDocumentsDirectory()).path;
       // FileSaver.instance.saveFile(name: genName, ext: 'jpg', file: Image.memory(response.bodyBytes));
       saveImage(response.bodyBytes);
-
+      //end save gambar
 
 
       print(response.bodyBytes);
@@ -628,6 +595,7 @@ class _ImagePickState extends State<ImagePickGallery> {
     }
   }
 
+  //fungsi hapus gambar dari screen
   Future<void> _deleteimg() async{
     setState(() {
       _SelectedImage = null;
@@ -635,7 +603,9 @@ class _ImagePickState extends State<ImagePickGallery> {
       _imgstat = 0;
     });
   }
+  //end hapus gambar dari screen
 
+  //fungsi simpan gambar ke galeri
   Future<String> saveImage(Uint8List bytes) async {
     String path = "";
     try {
@@ -668,114 +638,7 @@ class _ImagePickState extends State<ImagePickGallery> {
     return path;
   }
 
+  //end simpan gambar ke galeri
+
 }
-
-
-
-class TabPage3 extends StatelessWidget {
-  const TabPage3({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    print('TabPage3 build');
-    return Scaffold(
-      appBar: AppBar(title: const Text('Tab 3')),
-      body: SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Tab 3'),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const Page2('tab3')));
-                },
-                child: const Text('Go to page2'))
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class Page1 extends StatelessWidget {
-  final String inTab;
-
-  const Page1(this.inTab, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Page 1')),
-      body: SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('in $inTab Page 1'),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => Page2(inTab)));
-                },
-                child: const Text('Go to page2'))
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class Page2 extends StatelessWidget {
-  final String inTab;
-
-  const Page2(this.inTab, {super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Page 2')),
-      body: SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('in $inTab Page 2'),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => Page3(inTab)));
-                },
-                child: const Text('Go to page3'))
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class Page3 extends StatelessWidget {
-  final String inTab;
-
-  const Page3(this.inTab, {super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Page 3')),
-      body: SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('in $inTab Page 3'),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Go back'))
-          ],
-        ),
-      ),
-    );
-  }
-}
+//end screen ambil gambar dari galeri
