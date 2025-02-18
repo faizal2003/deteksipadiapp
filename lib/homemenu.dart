@@ -46,9 +46,9 @@ class Homemenu extends StatelessWidget {
           backgroundColor: Colors.white,
 
           body: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage("assets/bg-main.png"),
+                    image: AssetImage("assets/bg-utama.png"),
                     fit: BoxFit.fill
                 )
             ),

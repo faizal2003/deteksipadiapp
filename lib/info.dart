@@ -33,7 +33,7 @@ class Homemenu extends StatelessWidget {
     return LoaderOverlay(
       useDefaultLoading: false,
       overlayWidgetBuilder: (_) {
-        return Center(
+        return const Center(
           child: SpinKitCircle(
             color: Colors.lightGreenAccent,
             size: 50,
@@ -46,7 +46,7 @@ class Homemenu extends StatelessWidget {
           backgroundColor: Colors.white,
 
           body: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
                 image: DecorationImage(
                     image: AssetImage("assets/bg-main.png"),
                     fit: BoxFit.fill
@@ -73,18 +73,18 @@ class Homemenu extends StatelessWidget {
                               children: [
                                 Image.asset("assets/logo.png", scale: 3,),
                                 Container(
-                                  padding: EdgeInsets.all(20),
+                                  padding: const EdgeInsets.all(20),
                                 ),
-                                Text("Selamat Datang pada PadDetect !", style: TextStyle(fontSize: 40, color: Colors.white), textAlign: TextAlign.center,)
+                                const Text("Selamat Datang pada PadDetect !", style: TextStyle(fontSize: 40, color: Colors.white), textAlign: TextAlign.center,)
                               ],
                             )
                         ),
                         Container(
-                            child: Text("Aplikasi Deteksi Penyakit Tanaman Padi", style: TextStyle(fontSize: 25, color: Colors.white), textAlign: TextAlign.center,)
+                            child: const Text("Aplikasi Deteksi Penyakit Tanaman Padi", style: TextStyle(fontSize: 25, color: Colors.white), textAlign: TextAlign.center,)
 
                         ),
                         Container(
-                          child: Text("Silahkan masuk untuk melanjutkan identifikasi", style: TextStyle(fontSize: 25, color: Colors.white), textAlign: TextAlign.center,),
+                          child: const Text("Silahkan masuk untuk melanjutkan identifikasi", style: TextStyle(fontSize: 25, color: Colors.white), textAlign: TextAlign.center,),
                         ),
                         Container(
                           child: SizedBox(

@@ -49,7 +49,7 @@ class _ListDetectState extends State<Listdetect> {
           titleTextStyle: TextStyle(color: Colors.white, fontSize: 30),
         ),
         body: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               image: DecorationImage(
                   image: AssetImage("assets/bg-main.png"),
                   fit: BoxFit.fill
