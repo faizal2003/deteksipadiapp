@@ -48,6 +48,7 @@ dependencies:
   flutter_spinkit: ^5.2.1
   loader_overlay: ^4.0.0
   shared_preferences: ^2.2.3
+  rounded_background_text: ^0.5.0
 
 dev_dependencies:
   flutter_test:

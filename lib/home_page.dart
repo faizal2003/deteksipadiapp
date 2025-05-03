@@ -1,15 +1,15 @@
 import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui';
+// import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
+// import 'package:flutter/painting.dart';
+// import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+// import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:padipari/persistent_bottom_bar_scaffold.dart';
@@ -22,6 +22,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:gal/gal.dart';
 import 'package:padipari/listdetect.dart';
+import 'package:rounded_background_text/rounded_background_text.dart';
 
 
 
@@ -32,15 +33,17 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('TabPage1 build');
+    if (kDebugMode) {
+      print('TabPage1 build');
+    }
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
       appBar: AppBar(centerTitle: true ,
-        title: const Text('PadDetect'),
-        leading: Image.asset('assets/logo.png'),
+        title: const Text('PACATO'),
+        leading: Image.asset('assets/icon.png'),
         backgroundColor: Colors.transparent,
-        titleTextStyle: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold),
+        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold),
         actions: <Widget>[
           IconButton(onPressed: (){
             showDialog(context: context, builder: (ctx) => AlertDialog(
@@ -60,13 +63,13 @@ class HomePage extends StatelessWidget {
                 ),
               ],
             ));
-          }, icon: Icon(Icons.help_outlined, size: 42, color: Colors.white,))
+          }, icon: const Icon(Icons.help_outlined, size: 42, color: Colors.white,))
         ],
       ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/bg-main.png"),
+            image: AssetImage("assets/bg-menu.jpg"),
             fit: BoxFit.cover
           ),
         ),
@@ -78,22 +81,33 @@ class HomePage extends StatelessWidget {
           children: [
 
             Expanded(child: Container(
-              padding: EdgeInsets.fromLTRB(50, 40, 50, 100),
+              padding: EdgeInsets.fromLTRB(50, 200, 50, 200),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  DigitalClock(
-                    datetime: DateTime.now(),
-                    textScaleFactor: 2,
-                    showSeconds: false,
-                    isLive: true,
-                    digitalClockTextColor: Colors.white,
-                    padding: EdgeInsets.fromLTRB(100, 10, 100, 1),
-                    // decoration: const BoxDecoration(color: Colors.cyan, shape: BoxShape.rectangle, borderRadius: BorderRadius.all(Radius.circular(15))),
-                  ),
+
+                  // RoundedBackgroundText(
+                  //   'Silahkan masukan gambar',
+                  //   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 35),
+                  //   textAlign: TextAlign.center,
+                  //   backgroundColor: Colors.green,
+                  // ),
+
                   SizedBox(
-                    width: 350,
+                    width: 450,
+                    height: 80,
+                    child: FilledButton.icon(
+                      style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.green)),
+                      onPressed: null,
+                      label: const Text('Silahkan Masukan Gambar', style: TextStyle(fontSize: 25), textAlign: TextAlign.center,),
+                      icon: const Icon(Icons.upload, size: 45, color: Colors.white,),
+                    ),
+                  ),
+
+
+                  SizedBox(
+                    width: 190,
                     height: 100,
                     child: FilledButton.icon(
                       style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.green)),
@@ -101,13 +115,13 @@ class HomePage extends StatelessWidget {
                         Navigator.of(context).push(
                             MaterialPageRoute(builder: (context) => const ImagePickGallery()));
                       },
-                      label: const Text('Identifikasi Dari Galeri', style: TextStyle(fontSize: 25),),
-                      icon: const Icon(Icons.upload_file_rounded, size: 40),
+                      label: const Text('Galeri', style: TextStyle(fontSize: 25),),
+                      icon: const Icon(Icons.upload_file_rounded, size: 55, color: Colors.white,),
                     ),
                   ),
 
                   SizedBox(
-                    width: 350,
+                    width: 190,
                     height: 100,
                     child: FilledButton.icon(
                       style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.green)),
@@ -115,8 +129,8 @@ class HomePage extends StatelessWidget {
                         Navigator.of(context).push(
                             MaterialPageRoute(builder: (context) => const ImagePickCamera()));
                       },
-                      label: const Text('Identifikasi Dari Kamera', style: TextStyle(fontSize: 25), textAlign: TextAlign.center,),
-                      icon: const Icon(Icons.camera_enhance_rounded, size: 40,),
+                      label: const Text('Kamera', style: TextStyle(fontSize: 25),),
+                      icon: const Icon(Icons.camera_enhance_rounded, size: 55, color: Colors.white,),
                     ),
                   ),
 
@@ -173,7 +187,7 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
   int ? _pr;
   int _imgstat = 0;
   //link upload ke server
-  var urlAPI = 'https://detectpadi.my.id/object-to-img';
+  var urlAPI = 'https://detectpadi.my.id/img_object_detection_to_img';
 
   @override
   Widget build(BuildContext context) {
@@ -182,11 +196,11 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
         extendBodyBehindAppBar: true,
         backgroundColor: Colors.white,
         appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
           backgroundColor: Colors.transparent,
           centerTitle: true,
           title: const Text('Kirim Gambar Dari Camera'),
-          titleTextStyle: TextStyle(color: Colors.white, fontSize: 30),
+          titleTextStyle: const TextStyle(color: Colors.white, fontSize: 30),
           actions: <Widget>[
             IconButton(onPressed: (){
               showDialog(context: context, builder: (ctx) => AlertDialog(
@@ -205,13 +219,13 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
                   ),
                 ],
               ));
-            }, icon: Icon(Icons.help_rounded, size: 32,))
+            }, icon: const Icon(Icons.help_rounded, size: 32,))
           ],
         ),
         body: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage("assets/bg-main.png"),
+                  image: AssetImage("assets/bg-main.png"), 
                   fit: BoxFit.fill
               )
           ),
@@ -254,7 +268,7 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
                                     onPressed: () {
                                       _getImageFromCamera();
                                     },
-                                    label: const Text('pilih gambar', style: TextStyle(fontSize: 20),),
+                                    label: const Text('Ambil gambar', style: TextStyle(fontSize: 20),),
                                     icon: const Icon(Icons.camera_alt_rounded, size: 30),
                                   ),
                                 ):Text(''),
@@ -303,7 +317,8 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
     });
   }
   //fungsi upload gambar
-  Future<void> _upGambar(String url, File file) async{
+  Future<void> _upGambar(String url, File file) async {
+    print("upgambar start");
 
     setState(() {
       _pr = 1;
@@ -311,44 +326,106 @@ class _ImagePickCameraState extends State<ImagePickCamera> {
 
     context.loaderOverlay.show();
 
+    // Check and request storage permission
     var status = await Permission.storage.status;
     if (!status.isGranted) {
       await Permission.storage.request();
     }
-    //fungsi kirim gambar ke galeri dan simpan gambar terdeeksi
+
+    print("upgambar in progress");
+
+    // Create multipart request
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.files.add(await http.MultipartFile.fromPath('file', file.path));
 
-    var streamedResponse = await request.send();
-    var response = await http.Response.fromStream(streamedResponse);
-    // final resBody = await response.stream.bytesToString();
-    if (streamedResponse.statusCode == 200) {
-      // Upload successful
-      print('success');
+    print(request);
 
-      setState(() {
-        _ResponseAPI = response.bodyBytes;
-        _SelectedImage = null;
-      });
+    try {
+      // Send the initial request
+      var streamedResponse = await request.send();
+      print("Initial response status code: ${streamedResponse.statusCode}");
 
-      String genName = RndX.randomString(type: RandomCharStringType.alphaNumerical, length: 10);
-      // final String savepath = (getApplicationDocumentsDirectory()).path;
-      // FileSaver.instance.saveFile(name: genName, ext: 'jpg', file: Image.memory(response.bodyBytes));
-      saveImage(response.bodyBytes);
+      // Handle redirects (301, 302, etc.)
+      if (streamedResponse.statusCode == 301 ||
+          streamedResponse.statusCode == 302 ||
+          streamedResponse.statusCode == 307 ||
+          streamedResponse.statusCode == 308) {
+
+        // Get the redirect URL
+        final String? redirectUrl = streamedResponse.headers['location'];
+
+        if (redirectUrl != null) {
+          print('Redirecting to: $redirectUrl');
+
+          // Create a new request to the redirect URL
+          var redirectRequest = http.MultipartRequest('POST', Uri.parse(redirectUrl));
+          redirectRequest.files.add(await http.MultipartFile.fromPath('file', file.path));
+
+          // Send the new request
+          streamedResponse = await redirectRequest.send();
+          print("Redirect response status code: ${streamedResponse.statusCode}");
+        } else {
+          throw Exception("Redirect URL not found in headers");
+        }
+      }
+
+      // Convert streamed response to regular response
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200) {
+        // Upload successful
+        print('success');
+
+        setState(() {
+          _ResponseAPI = response.bodyBytes;
+          _SelectedImage = null;
+        });
+
+        String genName = RndX.randomString(type: RandomCharStringType.alphaNumerical, length: 10);
+        await saveImage(response.bodyBytes);
+
+        setState(() {
+          _pr = 0;
+          _imgstat = 1;
+        });
+
+        print("Response body size: ${response.bodyBytes.length} bytes");
+
+        context.loaderOverlay.hide();
+      } else {
+        // Handle error
+        print('Error: ${response.statusCode}');
+        print('Response body: ${response.body}');
+
+        setState(() {
+          _pr = 0;
+        });
+
+        context.loaderOverlay.hide();
+
+        // Show error to user
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Server error: ${response.statusCode}'))
+        );
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('Exception: $e');
 
       setState(() {
         _pr = 0;
-        _imgstat = 1;
       });
-
-      print(response.bodyBytes);
 
       context.loaderOverlay.hide();
 
-    } else {
-      // Handle errorset
+      // Show error to user
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Upload failed: $e'))
+      );
     }
   }
+  //end fungsi upgambar
+
   //fungsi simpan gambar ke galeri
   Future<String> saveImage(Uint8List bytes) async {
     String path = "";
@@ -405,7 +482,7 @@ class _ImagePickState extends State<ImagePickGallery> {
   int ? _pr;
   int _imgstat = 0;
   //link upload gambar ke server
-  var urlAPI = 'https://detectpadi.my.id/object-to-img';
+  var urlAPI = 'https://detectpadi.my.id/img_object_detection_to_img';
 
 
   @override
@@ -549,49 +626,111 @@ class _ImagePickState extends State<ImagePickGallery> {
   }
   //end perizinan simpan gambar
 
-  Future<void> _upGambar(String url, File file) async{
-  //fungsi upload gamber ke server
-    context.loaderOverlay.show();
+  Future<void> _upGambar(String url, File file) async {
+    print("upgambar start");
+
     setState(() {
       _pr = 1;
     });
-    //kirim gambar ke server
+
+    context.loaderOverlay.show();
+
+    // Check and request storage permission
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
+
+    print("upgambar in progress");
+
+    // Create multipart request
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.files.add(await http.MultipartFile.fromPath('file', file.path));
 
-    var streamedResponse = await request.send();
-    var response = await http.Response.fromStream(streamedResponse);
-    // final resBody = await response.stream.bytesToString();
-    //end kirim gambar ke server
-    if (streamedResponse.statusCode == 200) {
-      // Upload successful
-      print('success');
+    print(request);
 
+    try {
+      // Send the initial request
+      var streamedResponse = await request.send();
+      print("Initial response status code: ${streamedResponse.statusCode}");
+
+      // Handle redirects (301, 302, etc.)
+      if (streamedResponse.statusCode == 301 ||
+          streamedResponse.statusCode == 302 ||
+          streamedResponse.statusCode == 307 ||
+          streamedResponse.statusCode == 308) {
+
+        // Get the redirect URL
+        final String? redirectUrl = streamedResponse.headers['location'];
+
+        if (redirectUrl != null) {
+          print('Redirecting to: $redirectUrl');
+
+          // Create a new request to the redirect URL
+          var redirectRequest = http.MultipartRequest('POST', Uri.parse(redirectUrl));
+          redirectRequest.files.add(await http.MultipartFile.fromPath('file', file.path));
+
+          // Send the new request
+          streamedResponse = await redirectRequest.send();
+          print("Redirect response status code: ${streamedResponse.statusCode}");
+        } else {
+          throw Exception("Redirect URL not found in headers");
+        }
+      }
+
+      // Convert streamed response to regular response
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200) {
+        // Upload successful
+        print('success');
+
+        setState(() {
+          _ResponseAPI = response.bodyBytes;
+          _SelectedImage = null;
+        });
+
+        String genName = RndX.randomString(type: RandomCharStringType.alphaNumerical, length: 10);
+        await saveImage(response.bodyBytes);
+
+        setState(() {
+          _pr = 0;
+          _imgstat = 1;
+        });
+
+        print("Response body size: ${response.bodyBytes.length} bytes");
+
+        context.loaderOverlay.hide();
+      } else {
+        // Handle error
+        print('Error: ${response.statusCode}');
+        print('Response body: ${response.body}');
+
+        setState(() {
+          _pr = 0;
+        });
+
+        context.loaderOverlay.hide();
+
+        // Show error to user
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Server error: ${response.statusCode}'))
+        );
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('Exception: $e');
 
       setState(() {
-        _ResponseAPI = response.bodyBytes;
-        _SelectedImage = null;
         _pr = 0;
-        _imgstat = 1;
       });
-
-      //save gambar
-      String genName = RndX.randomString(type: RandomCharStringType.alphaNumerical, length: 10);
-      // final String savepath = (getApplicationDocumentsDirectory()).path;
-      // FileSaver.instance.saveFile(name: genName, ext: 'jpg', file: Image.memory(response.bodyBytes));
-      saveImage(response.bodyBytes);
-      //end save gambar
-
-
-      print(response.bodyBytes);
 
       context.loaderOverlay.hide();
 
-    } else {
-      // Handle errorset
-      setState(() {
-        _errorst = 'error';
-      });
+      // Show error to user
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Upload failed: $e'))
+      );
     }
   }
 
