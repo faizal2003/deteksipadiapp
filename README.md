@@ -32,7 +32,8 @@
 ## 🔧 Setup & Installation  
 
 ### 1. Backend (FastAPI + YOLOv8)  
-you can check this repo
+you can check this [repo](https://github.com/faizal2003/yolov8API)  
+
 
 ### 2. Flutter app
 ```bash
@@ -49,4 +50,4 @@ flutter run
 4. Flutter app displays results to the user
 
 ### Demo
-coming soon
+- **coming soon**
