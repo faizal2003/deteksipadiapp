@@ -1,16 +1,52 @@
-# padipari
+# 📱 Flutter YOLOv8 Image Detection App  
 
-A new Flutter project.
+> 🚀 An Android app built with **Flutter** + **FastAPI** backend, powered by **YOLOv8** for fast and accurate image object detection.  
 
-## Getting Started
+<p align="center">
+  <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white"/>
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white"/>
+  <img src="https://img.shields.io/badge/YOLOv8-FF6F00?style=for-the-badge&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white"/>
+  <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge"/>
+</p>
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
+## 🚀 Features  
+- 📷 Upload or capture images directly from the Android app  
+- 🤖 Object detection powered by **YOLOv8**  
+- 🌐 **FastAPI** backend for smooth communication  
+- ⚡ Fast and accurate detection results  
+- 🛠️ Modular design (Frontend: Flutter, Backend: FastAPI, Model: YOLOv8)  
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🏗️ Tech Stack  
+- **Frontend:** Flutter (Dart)  
+- **Backend:** FastAPI (Python)  
+- **Model:** YOLOv8 (Ultralytics)  
+- **Communication:** REST API (JSON)  
+
+---
+
+## 🔧 Setup & Installation  
+
+### 1. Backend (FastAPI + YOLOv8)  
+you can check this repo
+
+### 2. Flutter app
+```bash
+cd app
+flutter pub get
+flutter run
+```
+
+## 📡 API Workflow
+
+1. Flutter app sends image to FastAPI backend
+2. FastAPI processes image with YOLOv8 model
+3. Detected objects (labels, confidence, bounding boxes) are returned as JSON
+4. Flutter app displays results to the user
+
+### Demo
+## coming soon
